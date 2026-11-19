@@ -1,0 +1,13 @@
+# Servicio de usuario, para tu PC: corre como tú, así que lee tus Descargas.
+# Instalación: ver README.md, «En tu PC».
+[Unit]
+Description=Datame Suitcase: copias de tus servicios en tu NAS
+After=network-online.target
+
+[Service]
+ExecStart=%h/.local/bin/datame-suitcase
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

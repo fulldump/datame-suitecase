@@ -1,0 +1,26 @@
+# Servicio de sistema, para el NAS o un servidor de casa.
+# Corre con un usuario propio y guarda sus datos en /var/lib/datame-suitcase.
+# Instalación: ver README.md, «En el NAS».
+[Unit]
+Description=Datame Suitcase: copias de tus servicios en tu NAS
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=datame-suitcase
+Group=datame-suitcase
+ExecStart=/usr/local/bin/datame-suitcase
+# Da la carpeta de datos al programa (STATE_DIRECTORY) con permisos 0700.
+StateDirectory=datame-suitcase
+StateDirectoryMode=0700
+# Las exportaciones (ZIP de X, carpetas de Telegram) se dejan aquí; debe poder leerlas.
+# ReadOnlyPaths=/srv/datame-suitcase/entrada
+Restart=on-failure
+RestartSec=30
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+github.com/fulldump/apitest v1.3.1 h1:k2Wt9B4UZGmGApYhDmsO/2t2UdJwuJ+mfwCNT1+kq+g=
+github.com/fulldump/apitest v1.3.1/go.mod h1:UZ/2tr5LhMNXZLgEG9tdz+ekUN8JtBHEn84d8zOm5p4=
+github.com/fulldump/biff v1.3.0 h1:FZDqvP8lkrCMDv/oNEH+j2unpuAY+8aXZ44GIvXYOx4=
+github.com/fulldump/biff v1.3.0/go.mod h1:TnBce9eRITmnv3otdmITKeU/zmC08DxotA9s0VcJELg=
+github.com/fulldump/box v0.7.0 h1:aaGVNDmEOzizQ+U9bLtL8ST7RA5mjpT9i9q9h84GgoE=
+github.com/fulldump/box v0.7.0/go.mod h1:k1dcwIeNOar6zLlP9D8oF/4FjQeK8kAt7BtRUh/SrMg=
+github.com/fulldump/goconfig v1.9.0 h1:z4Jhbc1V006L4FNeAXnC9O+x2XavZaiYFosodIKBHrI=
+github.com/fulldump/goconfig v1.9.0/go.mod h1:LzfgG6u54UuTDjKpT0Z9eOu6aYEFZExKRbpTec3bCtA=
+github.com/fulldump/gootstrap v0.1.1 h1:/dCczmpCEQJy4DOOYlhE7iR3e3ymBiOhZNtAUfZvkSQ=
+github.com/fulldump/gootstrap v0.1.1/go.mod h1:PbsNiPdJwFFnzR7481RKG9sdJzCPaXr+amyIe6+gMqQ=
+github.com/holacloud/store v0.3.0 h1:03CxUzdGnJbq4BEwGDrKDWwgrlV2X+067UsnW4lfMAY=
+github.com/holacloud/store v0.3.0/go.mod h1:F1ktF2qodYz1Ow6YdPbt6WFisTEKC6fGk4CUSx+GYts=

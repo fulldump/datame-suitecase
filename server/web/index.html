@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datame Suitcase</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-inner">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Datame Suitcase</div>
+    <div class="brand-sub">Tus datos de otros servicios, en tu NAS</div>
+  </div>
+</header>
+
+<main class="page">
+  <section aria-labelledby="nas-title">
+    <div class="section-head"><h2 id="nas-title">Tu NAS</h2></div>
+    <div id="nas" class="card"><div class="card-body hint">Cargando…</div></div>
+  </section>
+
+  <section aria-labelledby="list-title">
+    <div class="section-head">
+      <h2 id="list-title">Servicios</h2>
+      <button id="add" class="primary">Añadir</button>
+    </div>
+    <div id="list"></div>
+  </section>
+</main>
+
+<dialog id="pair">
+  <form class="form" method="dialog">
+    <div class="dialog-head"><h2>Emparejar con el NAS</h2></div>
+    <div class="dialog-body form">
+      <p class="hint">En la web de tu NAS, ve a <strong>Conexiones → Móviles → Añadir</strong>. Ponle un nombre (por ejemplo «Suitcase»), elige el volumen y la carpeta, y copia el código que empieza por <code>datame-movil:</code>. Pégalo aquí.</p>
+      <label class="field">
+        <span class="field-label">Código de emparejamiento</span>
+        <textarea id="pair-code" class="code" rows="5" required placeholder="datame-movil:…"></textarea>
+      </label>
+      <p class="field-hint">El código da permiso para leer y añadir ficheros en tus volúmenes, nunca para borrar. Si lo pierdes o ya no lo usas, bórralo en la web del NAS.</p>
+      <p id="pair-error" class="form-error" hidden></p>
+    </div>
+    <div class="dialog-foot">
+      <button type="button" data-close>Cancelar</button>
+      <button id="pair-ok" class="primary" type="submit">Emparejar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="edit">
+  <form id="edit-form" class="form" method="dialog">
+    <div class="dialog-head"><h2 id="edit-title">Añadir un servicio</h2></div>
+    <div class="dialog-body form" id="edit-body"></div>
+    <div class="dialog-foot">
+      <button type="button" data-close>Cancelar</button>
+      <button id="edit-ok" class="primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="log">
+  <div class="dialog-head"><h2 id="log-title">Registro</h2></div>
+  <div class="dialog-body"><ul id="log-lines" class="log"></ul></div>
+  <div class="dialog-foot"><button type="button" data-close>Cerrar</button></div>
+</dialog>
+
+<dialog id="confirm">
+  <div class="dialog-head"><h2 id="confirm-title"></h2></div>
+  <div class="dialog-body"><p id="confirm-text"></p></div>
+  <div class="dialog-foot">
+    <button type="button" data-close>Cancelar</button>
+    <button id="confirm-ok" class="danger-fill" type="button"></button>
+  </div>
+</dialog>
+</body>
+</html>
