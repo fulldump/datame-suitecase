@@ -2,9 +2,13 @@
 package all
 
 import (
+	_ "github.com/fulldump/datame-suitcase/plugins/facebook"
 	_ "github.com/fulldump/datame-suitcase/plugins/folder"
 	_ "github.com/fulldump/datame-suitcase/plugins/github"
+	_ "github.com/fulldump/datame-suitcase/plugins/instagram"
+	_ "github.com/fulldump/datame-suitcase/plugins/linkedin"
 	_ "github.com/fulldump/datame-suitcase/plugins/rss"
 	_ "github.com/fulldump/datame-suitcase/plugins/telegram"
 	_ "github.com/fulldump/datame-suitcase/plugins/twitter"
+	_ "github.com/fulldump/datame-suitcase/plugins/whatsapp"
 )
