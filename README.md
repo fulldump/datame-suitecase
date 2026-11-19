@@ -237,7 +237,7 @@ Hay tres caminos, y ninguno es perfecto:
 2. **APIs con OAuth.** Gmail y Drive tienen APIs incrementales muy buenas (`history` de Gmail, `changes` de Drive). Pero sus permisos de lectura (`gmail.readonly`, `drive.readonly`) son «restringidos»: una app publicada para todo el mundo necesita la verificación de Google y una auditoría de seguridad anual de pago. Para un programa libre que cada uno instala en casa, la salida es que **cada persona registre su propia app** en Google Cloud Console (gratis): con una cuenta normal, la app queda «en pruebas» y Google caduca el permiso **cada 7 días**, así que habría que volver a autorizar cada semana; con **Google Workspace** (la de pago, la antigua GSuite) la app puede ser «interna» a la organización, sin verificación ni caducidad. La autorización se haría con el flujo de app instalada, redirigiendo a la propia web local (`http://127.0.0.1:4141/oauth/…`). El flujo de dispositivo (el de las teles) no sirve: no admite los permisos de Gmail.
 3. **IMAP con contraseña de aplicación**, para el correo. Con la verificación en dos pasos activada, Google permite crear contraseñas de aplicación, y por IMAP se leen solo los correos nuevos (por `UID`). Guardaría un `.eml` por correo, el formato más duradero que hay. Funciona además con cualquier proveedor de correo. Un administrador de Workspace puede desactivarlo. **Es el siguiente servicio más rentable.**
 
-**Plan:** primero IMAP genérico; después el importador de Takeout; las APIs, solo para cuentas de Workspace.
+**Hoy:** el correo va por «Correo (IMAP)» y el resto por «Google Takeout». Las APIs quedan solo para cuentas de Workspace.
 
 ### YouTube
 
@@ -319,7 +319,7 @@ Los tests no usan la red ni ficheros personales: el NAS, el blog, la API de GitH
 
 - Probarlo contra un NAS real durante semanas.
 - GitHub: bundles incrementales (`git bundle create … ^<lo ya enviado>`) para no guardar el repositorio entero en cada cambio; wikis y releases.
-- Servicios: IMAP, importador de Google Takeout, LinkedIn, Mastodon, Bluesky (ver arriba).
+- Servicios: LinkedIn, Mastodon, Bluesky, WhatsApp, Instagram y Facebook (en camino).
 - Leer las exportaciones muy grandes de Telegram sin cargar `result.json` entero en memoria.
 - Avisar en la web cuando un servicio lleva días fallando.
 - Que la lista de lo escrito no crezca sin límite en servicios con millones de ficheros.
