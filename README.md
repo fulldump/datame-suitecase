@@ -173,12 +173,23 @@ Meta escribe los acentos y los emojis mal en sus JSON («Ã©» en vez de «é»
 
 ### LinkedIn
 
-LinkedIn no da API para leer tus propias publicaciones o mensajes, así que se usa la copia de tus datos:
+Copia tu cuenta sola, una vez al día. LinkedIn no tiene una API para leer tus propios datos, así que se usa la de su propia web (la llaman Voyager) con tu sesión: la cookie `li_at`.
 
-1. **Yo → Configuración y privacidad → Privacidad de datos → Obtener una copia de tus datos**, y elige el archivo completo.
-2. La parte rápida llega en minutos y la completa en unas 24 horas, por correo. Deja el ZIP (`Complete_LinkedInDataExport_….zip`) en una carpeta y ponla en Suitcase.
+1. Entra en linkedin.com en el navegador.
+2. Abre las herramientas de desarrollo (F12) → **Aplicación** (en Firefox, **Almacenamiento**) → **Cookies** → `https://www.linkedin.com`.
+3. Copia el valor de `li_at` y pégalo en Suitcase. Se guarda cifrada. `JSESSIONID` se obtiene sola.
 
-Guarda `perfil.md` (tu currículum: extracto, experiencia, formación, aptitudes), `contactos.csv` y `contactos.md`, `mensajes/<conversación>/AAAA/AAAA-MM.json` y `.md`, `publicaciones/AAAA/AAAA-MM.json` y `.md`, y en `originales/<copia>/` todos los CSV tal como llegaron. No trae las imágenes de las publicaciones, solo sus enlaces.
+La cookie dura meses. Si cierras la sesión en ese navegador, deja de valer y Suitcase lo dirá: hay que copiarla otra vez.
+
+Copia tu perfil (experiencia, formación, aptitudes, idiomas, certificaciones), tus contactos (la lista entera una vez por semana; los demás días, los nuevos), tus mensajes (solo las conversaciones con algo nuevo) y tus publicaciones. Guarda también la respuesta del perfil tal como llega (`api/perfil.json`).
+
+**Con cuidado:**
+- Esa API no está documentada y LinkedIn la cambia de vez en cuando. Cada parte va por su cuenta: si una deja de funcionar, se avisa en el registro y las demás se siguen copiando.
+- Las condiciones de LinkedIn no permiten el acceso automático. Va despacio (pausas de 1,5 a 4 segundos, como mucho 400 peticiones por copia) y se para en cuanto LinkedIn pide una comprobación o limita. Aun así, úsalo con tu cuenta y bajo tu responsabilidad.
+
+**Además, la copia de tus datos** (opcional). Trae cosas que la web no enseña, como los correos de los contactos o las invitaciones, y sirve de respaldo si la web cambia. Pídela en **Yo → Configuración y privacidad → Privacidad de datos → Obtener una copia de tus datos** («Quiero todo») y deja el ZIP en la carpeta que indiques. Las dos vías escriben en los mismos ficheros y se juntan sin duplicar contactos ni mensajes. Las publicaciones sí pueden salir dos veces: la copia y la web las enlazan con identificadores distintos.
+
+Guarda `perfil.md` (tu currículum), `contactos.csv` y `contactos.md`, `mensajes/<conversación>/AAAA/AAAA-MM.json` y `.md`, `publicaciones/AAAA/AAAA-MM.json` y `.md`, y en `originales/<copia>/` los CSV de cada copia tal como llegaron. Las imágenes de las publicaciones no, solo sus enlaces.
 
 ### GitHub
 

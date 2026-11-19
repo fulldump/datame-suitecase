@@ -1,7 +1,8 @@
-// Package linkedin imports the copy of the data that LinkedIn gives to each
-// member («Obtener una copia de tus datos»): a ZIP of CSV files. LinkedIn has
-// no API for a person to read their own posts or messages, so this is the
-// only way to keep them.
+// Package linkedin keeps a copy of a LinkedIn account. On its own, with the
+// session cookie, through the internal API of its web (see live.go); and from
+// the copy of the data that LinkedIn gives to each member («Obtener una copia
+// de tus datos»), a ZIP of CSV files, which brings a few things more (emails of
+// the contacts, invitations) and is the fallback when the web changes.
 //
 // The CSVs are kept as they came, and turned into things to read: the
 // profile as a CV, the contacts as a table, messages by conversation and
@@ -36,16 +37,21 @@ type Plugin struct{}
 func (Plugin) Info() plugin.Info {
 	return plugin.Info{
 		Kind:        "linkedin",
-		Title:       "LinkedIn (copia de tus datos)",
-		Description: "Importa la copia de tus datos de LinkedIn: tu perfil como un currículum, tus contactos, tus mensajes por conversación y tus publicaciones por meses, y los CSV originales.",
-		Help: "En LinkedIn, ve a Yo → Configuración y privacidad → Privacidad de datos → Obtener una copia de tus datos. " +
-			"Elige «Quiero todo» (el archivo completo) y pídelo. Llega un correo con el enlace en unas 24 horas (la parte rápida, en minutos). " +
-			"Deja el ZIP (Complete_LinkedInDataExport_….zip) en la carpeta que indiques aquí: cada copia nueva añade lo que falte, y lo que borres en LinkedIn sigue en el NAS. " +
-			"LinkedIn no da las imágenes de las publicaciones, solo sus enlaces.",
+		Title:       "LinkedIn",
+		Description: "Copia tu cuenta de LinkedIn sola, cada día: tu perfil como un currículum, tus contactos, tus mensajes por conversación y tus publicaciones por meses.",
+		Help: "LinkedIn no tiene una API para leer tus propios datos, así que se usa la de su web con tu sesión: la cookie «li_at». " +
+			"Para copiarla: entra en linkedin.com en el navegador, abre las herramientas de desarrollo (F12) → Aplicación (en Firefox, Almacenamiento) → Cookies → https://www.linkedin.com, y copia el valor de «li_at». " +
+			"Dura meses; si cierras la sesión en el navegador deja de valer y habrá que copiarla otra vez. Se guarda cifrada. " +
+			"Va despacio, una vez al día, y se para si LinkedIn pide una comprobación. Aun así, las condiciones de LinkedIn no permiten el acceso automático: úsalo con tu cuenta y bajo tu responsabilidad. " +
+			"Opcional: la copia de tus datos (Yo → Configuración y privacidad → Privacidad de datos → Obtener una copia de tus datos, «Quiero todo») trae además los correos de los contactos y las invitaciones. Si dejas los ZIP en una carpeta, también se importan. " +
+			"Lo que borres en LinkedIn sigue en el NAS.",
 		DefaultFolder:     "/Archivo/LinkedIn",
 		DefaultEveryHours: 24,
 		Fields: []plugin.Field{
-			{Name: "path", Label: "Carpeta donde dejas los ZIP (o uno, o la copia descomprimida)", Type: "path", Required: true, Placeholder: "/home/ana/Descargas/LinkedIn"},
+			{Name: "li_at", Label: "Cookie «li_at» de tu sesión", Type: "password", Secret: true, Help: "Ver cómo copiarla en la ayuda de arriba."},
+			{Name: "jsessionid", Label: "Cookie «JSESSIONID» (opcional)", Type: "password", Secret: true, Help: "Solo si sin ella no funciona: se obtiene sola."},
+			{Name: "path", Label: "Carpeta donde dejas los ZIP de la copia de tus datos (opcional)", Type: "path", Placeholder: "/home/ana/Descargas/LinkedIn"},
+			{Name: "base", Label: "Dirección de LinkedIn", Type: "url", Default: defaultBase, Help: "No hace falta cambiarla."},
 		},
 	}
 }
@@ -94,6 +100,24 @@ var finder = exportkit.Finder{IsExport: isExport}
 
 // Validate implements plugin.Plugin.
 func (Plugin) Validate(ctx context.Context, env plugin.Env) error {
+	if env.Config.Get("li_at") == "" && env.Config.Get("path") == "" {
+		return errors.New("pon la cookie «li_at» para que la copia sea automática (o, al menos, la carpeta de los ZIP)")
+	}
+	if env.Config.Get("li_at") != "" {
+		v, err := newVoyager(env)
+		if err != nil {
+			return err
+		}
+		if err := v.start(ctx); err != nil {
+			return err
+		}
+		if _, err := v.get(ctx, "/me"); err != nil {
+			return err
+		}
+	}
+	if env.Config.Get("path") == "" {
+		return nil
+	}
 	list, err := finder.Find(env.Config.Get("path"))
 	if err != nil {
 		return err
@@ -112,9 +136,48 @@ func (Plugin) Validate(ctx context.Context, env plugin.Env) error {
 	return nil
 }
 
+// cursor keeps the state of both ways apart: the export importer saves its
+// own cursor whole, and must not wipe the one of the live copy.
+type cursor struct {
+	Export json.RawMessage `json:"export,omitempty"`
+	Live   liveCursor      `json:"live"`
+}
+
 // Sync implements plugin.Plugin.
 func (Plugin) Sync(ctx context.Context, run *plugin.Run) error {
-	return exportkit.Sync(ctx, run, finder, importSource)
+	c := cursor{}
+	if raw := run.Cursor(); len(raw) > 0 {
+		var probe map[string]json.RawMessage
+		if err := json.Unmarshal(raw, &probe); err != nil {
+			return err
+		}
+		if _, old := probe["imported"]; old {
+			c.Export = raw // from before the live copy: all of it was the importer's
+		} else if err := json.Unmarshal(raw, &c); err != nil {
+			return err
+		}
+	}
+	save := func() error { return run.Save(c) }
+
+	var liveErr error
+	if run.Config.Get("li_at") != "" {
+		if liveErr = syncLive(ctx, run, &c.Live, save); liveErr != nil {
+			run.Logf("Copia automática: %v", liveErr)
+		}
+	}
+	if run.Config.Get("path") != "" {
+		// The importer, with a cursor of its own inside this one.
+		sub := plugin.NewRun(run.Env, run.Out, c.Export, func(data json.RawMessage) error {
+			c.Export = data
+			return save()
+		}, run.Logf)
+		err := exportkit.Sync(ctx, sub, finder, importSource)
+		run.Item(sub.Items())
+		if err != nil {
+			return err
+		}
+	}
+	return liveErr
 }
 
 // ---- Reading the CSVs ----
