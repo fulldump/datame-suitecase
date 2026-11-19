@@ -149,6 +149,37 @@ Guarda:
 
 Cada exportación es la cuenta entera, pero solo se escribe lo nuevo o lo que cambió; lo que borres en Google sigue en el NAS. Una parte que no se puede abrir (porque aún se descarga) o que falta en la numeración hace esperar a esa exportación hasta la siguiente copia. Los ficheros se leen como un flujo, sin cargarlos en memoria: sirven partes de 50 GB. Los `.tgz` se leen dos veces, porque no se puede saltar dentro de ellos, y cada fichero grande se copia un momento a la carpeta temporal.
 
+### WhatsApp
+
+WhatsApp no tiene API para leer tus propios chats, y exporta **de uno en uno**, desde el móvil:
+
+1. Android: abre el chat → **⋮ → Más → Exportar chat**. iPhone: abre el chat → toca su nombre → **Exportar chat**.
+2. Elige **«Incluir archivos»** para que vayan las fotos, vídeos, audios y documentos; sin ellos solo va el texto (y WhatsApp limita a menos mensajes si llevan archivos).
+3. Guarda el ZIP o el `.txt` («Chat de WhatsApp con Ana.txt», «WhatsApp Chat - Ana.zip») en una carpeta y pon esa carpeta en Suitcase.
+
+Guarda cada chat en `chats/<nombre>/`: `AAAA/AAAA-MM.json` y `.md` por mes, `media/AAAA-MM/` con los ficheros, y `originales/` con el `.txt` tal como llegó. Entiende los formatos de Android y de iPhone, en español, inglés y otros idiomas, con reloj de 12 o 24 horas. El texto no trae ids ni zona horaria: cada mensaje se reconoce por su hora, su autor y su texto, así que **puedes volver a exportar el mismo chat cuando quieras** y solo se añade lo nuevo. Una exportación sin archivos no borra las fotos que ya se guardaron. El nombre del chat sale del nombre del fichero: si renombras el contacto, el chat nuevo irá a otra carpeta.
+
+### Instagram y Facebook
+
+La API para leer tu propio contenido (Basic Display) se cerró en 2024, así que se usa **«Descargar tu información»**:
+
+1. En Instagram (perfil → ☰) o en Facebook (Configuración y privacidad → Configuración): **Centro de cuentas → Tu información y permisos → Descargar tu información → Descargar o transferir información**.
+2. Elige la cuenta, «Información completa», «Descargar en el dispositivo», el intervalo **«Desde el principio»** y el formato **JSON** (no HTML: el HTML no se puede importar).
+3. Tarda de horas a días. Deja todos los ZIP que lleguen (a veces son varios) en una carpeta y pon esa carpeta en Suitcase: cada exportación nueva añade lo que falte.
+
+Instagram guarda `publicaciones/`, `historias/` y `reels/` por meses (JSON y Markdown) con las fotos y vídeos en `media/AAAA/AAAA-MM/`; `mensajes/<conversación>/AAAA/AAAA-MM.json` y `.md` con sus fotos; y `comentarios`, `me-gusta`, `guardados`, `seguidores` y `seguidos` en JSON y CSV. Facebook guarda `publicaciones/` por meses, `albumes/<álbum>/` con sus fotos y vídeos, los mensajes igual que Instagram, y `comentarios`, `reacciones` y `amigos` en JSON y CSV. Lo demás de la exportación va a `otros/`, tal como viene.
+
+Meta escribe los acentos y los emojis mal en sus JSON («Ã©» en vez de «é»); Suitcase los arregla en todo lo que guarda. Las horas van en UTC, que es como vienen. Las listas suman: alguien que deja de seguirte sigue en `seguidores`.
+
+### LinkedIn
+
+LinkedIn no da API para leer tus propias publicaciones o mensajes, así que se usa la copia de tus datos:
+
+1. **Yo → Configuración y privacidad → Privacidad de datos → Obtener una copia de tus datos**, y elige el archivo completo.
+2. La parte rápida llega en minutos y la completa en unas 24 horas, por correo. Deja el ZIP (`Complete_LinkedInDataExport_….zip`) en una carpeta y ponla en Suitcase.
+
+Guarda `perfil.md` (tu currículum: extracto, experiencia, formación, aptitudes), `contactos.csv` y `contactos.md`, `mensajes/<conversación>/AAAA/AAAA-MM.json` y `.md`, `publicaciones/AAAA/AAAA-MM.json` y `.md`, y en `originales/<copia>/` todos los CSV tal como llegaron. No trae las imágenes de las publicaciones, solo sus enlaces.
+
 ### GitHub
 
 1. Crea un token en **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**, con acceso a tus repositorios y permisos de **solo lectura**: Contents, Issues, Pull requests y Metadata.
@@ -229,7 +260,7 @@ Si nada ha cambiado, no descarga nada. Cada foto o vídeo se descarga una sola v
 
 ### Carpeta local
 
-Copia una carpeta de la máquina donde corre Suitcase: lo nuevo y lo que cambia (el NAS guarda la versión anterior). Lo que borres en la carpeta sigue en el NAS. Sirve para cualquier exportación que no tenga su propio servicio todavía: Google Takeout descomprimido, el ZIP de LinkedIn, la exportación de WordPress o de Instagram.
+Copia una carpeta de la máquina donde corre Suitcase: lo nuevo y lo que cambia (el NAS guarda la versión anterior). Lo que borres en la carpeta sigue en el NAS. Sirve para cualquier exportación que no tenga su propio servicio todavía: Google Takeout descomprimido o la exportación de WordPress.
 
 ### Fichero de una dirección web
 
@@ -248,14 +279,6 @@ La web no muestra nunca un token guardado: al editar, un campo secreto vacío co
 ## Otros servicios: cómo se harían
 
 Estos no están en esta versión. Lo que se puede hacer ya, y el plan:
-
-### LinkedIn
-
-LinkedIn no da API para que una persona lea sus propias publicaciones o mensajes: las APIs de miembros (Community Management, Marketing) exigen ser socio y pasar una revisión, y «Sign In with LinkedIn» solo da el nombre y el correo.
-
-**Hoy:** **Configuración → Privacidad de datos → Obtener una copia de tus datos**. La parte rápida llega en unos minutos y el archivo completo en unas 24 horas: un ZIP con CSV (`Connections.csv`, `messages.csv`, `Profile.csv`, `Shares.csv`, `Positions.csv`…). Descomprímelo en una carpeta y usa «Carpeta local».
-
-**Plan:** un importador como el de X: cada CSV a JSON y Markdown (las publicaciones por meses, los mensajes por conversación), fusionando con lo que ya hay. No trae las imágenes de las publicaciones, solo enlaces.
 
 ### Google (Gmail, Drive, Fotos, Calendar) y Google Workspace
 
@@ -280,10 +303,6 @@ La API de YouTube (Data API v3) se usa con una clave gratuita sin revisión, con
 La API de Twitch (Helix) es gratuita: se registra una app en <https://dev.twitch.tv/console> sin revisión, y con sus credenciales se listan tus emisiones, clips y vídeos. No da los ficheros de vídeo. Las emisiones pasadas **caducan** a los pocos días (7 en la mayoría de cuentas; más con Partner, Turbo o Prime), así que lo urgente es descargarlas: Twitch lo permite desde el Productor de vídeo, a mano.
 
 **Plan:** un servicio que guarde los metadatos de vídeos y clips con la API y avise de las emisiones que van a caducar. Descargar los vídeos por la lista HLS es posible pero no está documentado ni permitido, así que no se hará.
-
-### Otros fáciles
-
-- **Instagram y Facebook:** «Descargar tu información» en formato JSON; la API para leer tu propio contenido (Basic Display) se cerró en 2024. Importador como el de Telegram.
 
 ## Escribir un servicio nuevo
 
@@ -345,7 +364,7 @@ Los tests no usan la red ni ficheros personales: el NAS, el blog, la API de GitH
 
 - Probarlo contra un NAS real durante semanas.
 - GitHub: bundles incrementales (`git bundle create … ^<lo ya enviado>`) para no guardar el repositorio entero en cada cambio; wikis y releases.
-- Servicios: LinkedIn, WhatsApp, Instagram y Facebook (en camino).
+- Servicios: Dropbox y OneDrive, Strava, Notion, Todoist, Pocket/Raindrop, Last.fm, Reddit y Spotify (exportaciones), Discord.
 - Leer las exportaciones muy grandes de Telegram sin cargar `result.json` entero en memoria.
 - Avisar en la web cuando un servicio lleva días fallando.
 - Que la lista de lo escrito no crezca sin límite en servicios con millones de ficheros.
