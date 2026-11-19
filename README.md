@@ -144,6 +144,26 @@ Y `estrellas.json` / `estrellas.md`. Los forks se pueden incluir. El token se pa
 
 Cada bundle es el repositorio entero: un repositorio grande que cambia a menudo ocupa una copia entera por cada cambio en el historial del NAS. Ver «Pendiente».
 
+### Correo (IMAP)
+
+Copia el correo de Gmail, Outlook/Hotmail, iCloud, Fastmail, Yahoo o cualquier proveedor con IMAP. Hace falta una **contraseña de aplicación** (casi siempre con la verificación en dos pasos activada), no la normal de la cuenta:
+
+- **Gmail:** <https://myaccount.google.com/apppasswords>, ponle un nombre y copia las 16 letras.
+- **Outlook / Hotmail:** account.microsoft.com → Seguridad → Opciones de seguridad avanzadas → Contraseñas de aplicación. Microsoft está retirando este acceso en muchas cuentas; si no la acepta, puede que la tuya ya no lo permita.
+- **iCloud:** account.apple.com → Inicio de sesión y seguridad → Contraseñas específicas para apps. El usuario es la dirección `@icloud.com`.
+
+En «Servidor» basta con escribir `gmail`, `outlook`, `icloud`, `fastmail` o `yahoo`, o dejarlo vacío para que lo deduzca de la dirección. Va siempre cifrado (TLS en el puerto 993, o STARTTLS en el 143 si se marca); si el servidor no permite cifrar, no se envía la contraseña. **No cambia nada en el buzón**: abre las carpetas en solo lectura y no marca nada como leído.
+
+Guarda, en `<carpeta>/AAAA/AAAA-MM/`:
+
+- `AAAA-MM-DD-<asunto>-<huella>.eml`: cada correo tal como está en el servidor, con sus adjuntos dentro. Lo abre cualquier programa de correo, y es texto. La huella sale del propio contenido, así que un correo nunca se guarda dos veces.
+- `indice.json` e `indice.md`: fecha, remitente, asunto y fichero de cada correo del mes.
+- Opcionalmente, los adjuntos también sueltos, en una carpeta con el nombre del correo.
+
+Por cada carpeta recuerda el último correo copiado (`UID` y `UIDVALIDITY`): solo trae los nuevos. Si el servidor renumera una carpeta, la repasa reconociendo por su `Message-ID` lo ya copiado, sin volver a descargarlo. Copia como mucho 5.000 correos por ejecución (se puede cambiar): un buzón grande se completa en varias, cada una sigue donde lo dejó la anterior. La papelera y el correo no deseado se saltan por defecto.
+
+**Gmail** muestra cada etiqueta como una carpeta, así que copiarlas todas repetiría los correos. Se copia solo «Todos» (`[Gmail]/All Mail`), que tiene cada correo una vez, y sus etiquetas se apuntan en el índice. Si escribes carpetas concretas, se copian esas.
+
 ### Carpeta local
 
 Copia una carpeta de la máquina donde corre Suitcase: lo nuevo y lo que cambia (el NAS guarda la versión anterior). Lo que borres en la carpeta sigue en el NAS. Sirve para cualquier exportación que no tenga su propio servicio todavía: Google Takeout descomprimido, el ZIP de LinkedIn, la exportación de WordPress o de Instagram.
