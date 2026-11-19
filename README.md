@@ -144,6 +144,34 @@ Y `estrellas.json` / `estrellas.md`. Los forks se pueden incluir. El token se pa
 
 Cada bundle es el repositorio entero: un repositorio grande que cambia a menudo ocupa una copia entera por cada cambio en el historial del NAS. Ver «Pendiente».
 
+### Mastodon (y el resto del fediverso)
+
+Sirve para Mastodon, GoToSocial, Pleroma, Akkoma y cualquier servidor con la API de Mastodon.
+
+1. En la web de tu servidor: **Preferencias → Desarrollo → Nueva aplicación**. Desmarca todo y marca solo los permisos de lectura: `read:accounts`, `read:statuses`, `read:favourites`, `read:bookmarks`, `read:follows` y `read:lists`.
+2. Entra en la aplicación, copia **«Tu token de acceso»** y ponlo en Suitcase con la dirección del servidor. Con esos permisos solo puede leer.
+
+Guarda:
+
+- `publicaciones/AAAA/AAAA-MM.json` y `.md`: tus publicaciones, con impulsos y respuestas. El JSON es lo que da la API, con el historial de ediciones si se editó; el Markdown tiene el aviso de contenido, la visibilidad, a quién respondías, los enlaces enteros y las fotos con su texto alternativo.
+- `media/AAAA/AAAA-MM/`: fotos, vídeos y audios originales (`<id>-<nombre>`).
+- `favoritos` y `guardados` (`.json` y `.md`), `seguidores` y `seguidos` (`.json` y `.csv`, que se puede importar en otro servidor), `listas` y `perfil.json` con el avatar.
+
+La primera vez recorre toda tu cuenta hacia atrás; después solo pide lo publicado desde la última (`min_id`), y vuelve a leer la última página para ver las ediciones. Si el servidor pide esperar (límite de peticiones), espera hasta 5 minutos o lo deja para la siguiente ejecución, sin perder lo traído. Seguidores y seguidos son una foto del momento: el NAS guarda las anteriores en su historial.
+
+### Bluesky
+
+1. En Bluesky: **Ajustes → Privacidad y seguridad → Contraseñas de aplicación → Añadir**. No es la contraseña de tu cuenta y se puede borrar cuando quieras.
+2. En Suitcase pon tu usuario (`ana.bsky.social`) y esa contraseña. Si tu cuenta está en un servidor propio, pon su dirección; si no, se averigua sola.
+
+Guarda:
+
+- `repositorio/`: tu cuenta entera tal como la da Bluesky, en ficheros CAR (`com.atproto.sync.getRepo`). Es la copia de verdad: tiene todo y cada bloque se comprueba con su huella. La primera vez es `<revisión>-completo.car`; después solo los cambios, `<revisión>-desde-<anterior>.car`, que juntos con los anteriores forman el repositorio entero. Cada 30 cambios se descarga otro completo.
+- `publicaciones/AAAA/AAAA-MM.json` y `.md`, leídas de ese repositorio, con las fotos y vídeos en `media/AAAA/AAAA-MM/<cid>`, el texto alternativo, las respuestas, las citas y los enlaces enteros.
+- `me-gusta`, `republicaciones` (`.json` y `.md`), `seguidos` (`.json` y `.csv`), `listas` y `perfil.json` con el avatar en `perfil/`.
+
+Si nada ha cambiado, no descarga nada. Cada foto o vídeo se descarga una sola vez. Los mensajes directos no están en el repositorio y no se copian. No se comprueba la firma del repositorio, solo las huellas: el CAR guardado permite comprobarla después.
+
 ### Carpeta local
 
 Copia una carpeta de la máquina donde corre Suitcase: lo nuevo y lo que cambia (el NAS guarda la versión anterior). Lo que borres en la carpeta sigue en el NAS. Sirve para cualquier exportación que no tenga su propio servicio todavía: Google Takeout descomprimido, el ZIP de LinkedIn, la exportación de WordPress o de Instagram.
