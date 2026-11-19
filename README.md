@@ -144,6 +144,21 @@ Y `estrellas.json` / `estrellas.md`. Los forks se pueden incluir. El token se pa
 
 Cada bundle es el repositorio entero: un repositorio grande que cambia a menudo ocupa una copia entera por cada cambio en el historial del NAS. Ver «Pendiente».
 
+### Calendarios y contactos (CalDAV y CardDAV)
+
+Para iCloud, Nextcloud, Fastmail, Radicale, Baïkal y cualquier servidor CalDAV o CardDAV. Se pone el servidor (`icloud`, `fastmail` o su dirección, por ejemplo `https://tu-servidor/remote.php/dav` en Nextcloud), el usuario y una **contraseña de aplicación** (iCloud: appleid.apple.com → Contraseñas específicas de apps; Fastmail y Nextcloud: en sus ajustes de seguridad). Los calendarios y las libretas se buscan solos (`/.well-known/caldav`), y se puede copiar solo una de las dos cosas.
+
+Guarda cada calendario en `Calendarios/<nombre>/` y cada libreta en `Contactos/<nombre>/`:
+
+- `eventos/*.ics` y `contactos/*.vcf`: cada evento y contacto tal como lo tiene el servidor (con su foto dentro). Es el formato de siempre de los calendarios y las agendas.
+- `<nombre>.ics` / `<nombre>.vcf`: todos juntos, para importarlos de una vez en cualquier aplicación. Es el calendario tal como está hoy en el servidor.
+- `<nombre>.md`: para leer: los eventos por año y mes (fecha, título, lugar, si se repite) y los contactos con sus teléfonos y correos.
+- `indice.json`: qué fichero es cada elemento del servidor. Con él, una instalación nueva sigue donde lo dejó la anterior.
+
+Solo pide lo que cambió: con el token de `sync-collection` (RFC 6578) si el servidor lo tiene, o comparando las ETag si no, y trae los cambios en lotes. Lo que borras en el servidor sigue en el NAS, tachado en el resumen y con el día en que se vio borrado.
+
+**Google no funciona todavía:** su CalDAV y CardDAV solo dejan entrar con OAuth, no con contraseñas de aplicación. Para Google Calendar usa la «dirección secreta en formato iCal» de cada calendario con «Fichero de una dirección web», y para los contactos, Takeout. **Outlook** no tiene CalDAV: hace falta un intermediario como DavMail.
+
 ### Carpeta local
 
 Copia una carpeta de la máquina donde corre Suitcase: lo nuevo y lo que cambia (el NAS guarda la versión anterior). Lo que borres en la carpeta sigue en el NAS. Sirve para cualquier exportación que no tenga su propio servicio todavía: Google Takeout descomprimido, el ZIP de LinkedIn, la exportación de WordPress o de Instagram.

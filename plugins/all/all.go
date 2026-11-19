@@ -2,6 +2,7 @@
 package all
 
 import (
+	_ "github.com/fulldump/datame-suitcase/plugins/dav"
 	_ "github.com/fulldump/datame-suitcase/plugins/folder"
 	_ "github.com/fulldump/datame-suitcase/plugins/github"
 	_ "github.com/fulldump/datame-suitcase/plugins/rss"
