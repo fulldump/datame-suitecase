@@ -129,6 +129,26 @@ Telegram solo exporta desde el programa de ordenador (Telegram Desktop):
 
 Guarda cada chat en `chats/<id>-<nombre>/`: `AAAA/AAAA-MM.json` y `AAAA/AAAA-MM.md` por mes, y `media/AAAA-MM/<id del mensaje>-<nombre>`. La carpeta de un chat no cambia aunque le cambies el nombre. Los ficheros se nombran por el mensaje porque Telegram numera las fotos de forma distinta en cada exportación. También guarda `perfil.json` y `contactos.json` si los exportas.
 
+### Google Takeout
+
+Google da gratis una copia de todo lo de tu cuenta en <https://takeout.google.com>:
+
+1. Elige qué exportar (por defecto, todo). En el paso siguiente: **«Exportar cada 2 meses durante 1 año»**, tipo **.zip** y tamaño de **50 GB**. Así llega sola una exportación nueva cada dos meses.
+2. Cuando llegue el correo, descarga todas las partes (`takeout-…-001.zip`, `-002.zip`…) y déjalas juntas en una carpeta. Pon esa carpeta en Suitcase. Sirven también los `.tgz` y la carpeta ya descomprimida.
+3. Puedes elegir qué productos importar. Las carpetas se reconocen en inglés y en español («Google Fotos» o «Google Photos», «Correo» o «Mail»…); las que no conoce van a `Otros/` tal cual, para que no se pierda nada.
+
+Guarda:
+
+- `Fotos/AAAA/AAAA-MM/`: cada foto y vídeo **una sola vez** (aunque esté en varios álbumes o partes), con la fecha en que se hizo y, al lado, el JSON de Google (fecha, lugar, descripción). `Fotos/Albumes/<álbum>/album.md` y `album.json` son la lista de cada álbum, con enlaces a esas fotos.
+- `Correo/mbox/`: el correo tal como viene (se puede desactivar) y además **un `.eml` por correo** en `Correo/<etiqueta>/AAAA/AAAA-MM/`, que abre cualquier programa de correo. Un correo se guarda una vez, por su `Message-ID`, aunque luego cambie de etiqueta.
+- `Keep/`: cada nota en JSON, en HTML y en Markdown (título, texto, listas, etiquetas y fechas), con sus adjuntos.
+- `Calendario/` y `Contactos/`: los `.ics` y `.vcf`, con un resumen en Markdown al lado.
+- `Drive/`, `YouTube/` (tus vídeos, historial y listas), `Maps/`, `Chrome/`: tal como vienen.
+- `Ubicaciones/`: el historial tal como viene y, si trae `Records.json`, un CSV por año (`resumen/AAAA.csv`).
+- `Originales/`: los ZIP, solo si lo activas: ocupan mucho y ya está todo guardado por productos.
+
+Cada exportación es la cuenta entera, pero solo se escribe lo nuevo o lo que cambió; lo que borres en Google sigue en el NAS. Una parte que no se puede abrir (porque aún se descarga) o que falta en la numeración hace esperar a esa exportación hasta la siguiente copia. Los ficheros se leen como un flujo, sin cargarlos en memoria: sirven partes de 50 GB. Los `.tgz` se leen dos veces, porque no se puede saltar dentro de ellos, y cada fichero grande se copia un momento a la carpeta temporal.
+
 ### GitHub
 
 1. Crea un token en **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**, con acceso a tus repositorios y permisos de **solo lectura**: Contents, Issues, Pull requests y Metadata.
